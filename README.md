@@ -116,6 +116,18 @@ Oracle Database
 * Enforce parking availability
 
 ---
+## 🗄️ Database Setup
+
+The complete Oracle SQL & PL/SQL script is available in:
+
+database/parking_schema.sql
+
+It contains:
+- Tables & sequences
+- Roles and privileges
+- Functions, procedures & triggers
+- Sample data
+
 
 ## 🌐 Flask Integration
 
