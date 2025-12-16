@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Espace Agent - Parking Smart</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #020617;
+            color: #e5e7eb;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1f2937;
+            background: #020617;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            background: #facc15;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .brand-text-title {
+            font-weight: 600;
+        }
+
+        .brand-text-sub {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .session-chip {
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(251, 191, 36, 0.12);
+            color: #facc15;
+            font-size: 13px;
+            border: 1px solid rgba(250, 204, 21, 0.4);
+        }
+
+        /* Layout */
+        .content {
+            padding: 24px 32px 40px;
+            max-width: 1320px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: radial-gradient(circle at top left, #020617, #020617 40%, #020617);
+            background-color: #020617;
+            border-radius: 18px;
+            padding: 24px 24px 20px;
+            border: 1px solid #1f2937;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+        }
+
+        .card-header {
+            margin-bottom: 18px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        /* Formulaires */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .input,
+        .select {
+            background: #020617;
+            border: 1px solid #1f2937;
+            border-radius: 999px;
+            padding: 9px 14px;
+            font-size: 14px;
+            color: #e5e7eb;
+            outline: none;
+        }
+
+        .input:focus,
+        .select:focus {
+            border-color: #fbbf24;
+            box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.35);
+        }
+
+        .btn-primary {
+            border-radius: 999px;
+            border: none;
+            padding: 10px 22px;
+            background: #fbbf24;
+            color: #111827;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 4px;
+            box-shadow: 0 12px 30px rgba(251, 191, 36, 0.35);
+            transition: transform 0.08s ease, box-shadow 0.08s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 40px rgba(251, 191, 36, 0.45);
+        }
+
+        .btn-secondary {
+            border-radius: 999px;
+            border: 1px solid #374151;
+            padding: 8px 18px;
+            background: #020617;
+            color: #e5e7eb;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: #fbbf24;
+            color: #fbbf24;
+        }
+
+        .btn-small {
+            border-radius: 999px;
+            border: 1px solid #374151;
+            background: #020617;
+            color: #e5e7eb;
+            font-size: 11px;
+            padding: 4px 10px;
+            cursor: pointer;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-small:hover {
+            background: #1f2937;
+            border-color: #4b5563;
+        }
+
+        /* Tableau générique */
+        .table-wrapper {
+            margin-top: 18px;
+            overflow: auto;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 480px;
+        }
+
+        thead {
+            background: #020617;
+        }
+
+        th, td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #1f2937;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 500;
+            color: #9ca3af;
+            font-size: 12px;
+            position: sticky;
+            top: 0;
+        }
+
+        tbody tr:hover {
+            background: rgba(251, 191, 36, 0.08);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-green {
+            background: rgba(22, 163, 74, 0.2);
+            color: #4ade80;
+        }
+        .badge-red {
+            background: rgba(220, 38, 38, 0.2);
+            color: #fca5a5;
+        }
+        .badge-yellow {
+            background: rgba(234, 179, 8, 0.2);
+            color: #facc15;
+        }
+        .badge-blue {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+
+        /* Section données */
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 18px;
+        }
+
+        .grid-tables {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .card-compact {
+            padding: 18px 18px 14px;
+            border-radius: 16px;
+            border: 1px solid #1f2937;
+            background: #020617;
+        }
+
+        .card-compact h3 {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .card-compact p {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #0b1220;
+            border: 1px solid #1f2937;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #9ca3af;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .modal-close:hover {
+            color: #e5e7eb;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            padding: 10px 32px 18px;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: right;
+            border-top: 1px solid #0f172a;
+        }
+
+        @media (max-width: 960px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .grid-tables {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .btn-gradient{
+            width:100%;
+            border:none;
+            border-radius:999px;
+            padding:12px 18px;
+            color:white;
+            font-weight:600;
+            cursor:pointer;
+            background: linear-gradient(90deg, #8b5cf6, #ec4899);
+        }
+        .btn-gradient:hover{ filter: brightness(1.05); }
+
+    </style>
+</head>
+<body>
+<div class="page">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="brand">
+            <div class="brand-logo">A</div>
+            <div class="brand-text">
+                <span class="brand-text-title">Parking Smart</span>
+                <span class="brand-text-sub">Espace agent</span>
+            </div>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <button id="btn-test-api" class="btn-small">🔌 Test API</button>
+            <a href="{{ url_for('logout') }}" class="logout-btn"> 
+                <i class="bi bi-box-arrow-right"></i>
+                 <span>Déconnexion</span> </a>
+</a>
+            <div class="session-chip">Connecté en tant qu'AGENT</div>
+        </div>
+    </header>
+
+    <!-- CONTENU -->
+    <main class="content">
+
+        <!-- Ligne : entrée / sortie -->
+        <div class="grid-2">
+            <!-- Valider une entrée -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title">✅ Valider une entrée</h2>
+                    <p class="card-subtitle">
+                        Enregistrer un client et générer un ticket d'entrée.
+                    </p>
+                </div>
+
+                <form id="form-entree">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nom du client</label>
+                            <input type="text" class="input" id="entree-nom" placeholder="Ex : Dupont" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Prénom</label>
+                            <input type="text" class="input" id="entree-prenom" placeholder="Ex : Martin" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Téléphone</label>
+                            <input type="tel" class="input" id="entree-telephone" placeholder="06 12 34 56 78" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Client PMR ?</label>
+                            <select class="select" id="entree-pmr">
+                                <option value="N">Non</option>
+                                <option value="O">Oui</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">🎫 Enregistrer l'entrée</button>
+                </form>
+
+                <div class="table-wrapper">
+                    <h4 style="font-size: 13px; margin: 16px 0 6px;">📋 Tickets récents</h4>
+                    <button id="btn-refresh-tickets" class="btn-small">🔄 Rafraîchir</button>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>TICKET</th>
+                            <th>CLIENT</th>
+                            <th>PLACE</th>
+                            <th>ENTRÉE</th>
+                            <th>STATUT</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tickets-tbody">
+                            <tr><td colspan="5" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Valider une sortie -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🚗 Valider une sortie</h2>
+                    <p class="card-subtitle">
+                        Traiter le paiement et enregistrer la sortie du client.
+                    </p>
+                </div>
+
+                <form id="form-sortie">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label class="form-label">ID ticket</label>
+                        <input type="text" class="input" id="sortie-ticket" placeholder="Ex : 102" required />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label class="form-label">Mode de paiement</label>
+                        <select class="select" id="sortie-mode">
+                            <option value="Carte">💳 Carte</option>
+                            <option value="Especes">💵 Espèces</option>
+                            <option value="En ligne">🌐 En ligne</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary">✔️ Calculer &amp; valider sortie</button>
+                </form>
+
+                <div class="table-wrapper">
+                    <h4 style="font-size: 13px; margin: 16px 0 6px;">💳 Paiements récents</h4>
+                    <button id="btn-refresh-paiements" class="btn-small">🔄 Rafraîchir</button>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>PAIEMENT</th>
+                            <th>TICKET</th>
+                            <th>MONTANT</th>
+                            <th>MODE</th>
+                            <th>STATUT</th>
+                        </tr>
+                        </thead>
+                        <tbody id="paiements-tbody">
+                            <tr><td colspan="5" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- DONNÉES DU PARKING : toutes les tables visibles -->
+        <section style="margin-top: 8px;">
+            <h2 class="section-title">📊 Données du parking</h2>
+            <p class="section-subtitle">
+                Vue globale des tables fonctionnelles en temps réel.
+            </p>
+
+            <div class="grid-tables">
+
+                <!-- CLIENT -->
+                <div class="card-compact">
+                    <h3>👥 Table CLIENT</h3>
+                    <p>Liste des clients connus du parking.</p>
+                    <button id="btn-refresh-clients" class="btn-small">🔄 Rafraîchir</button>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NOM</th>
+                                <th>PRÉNOM</th>
+                                <th>TÉLÉPHONE</th>
+                                <th>PMR</th>
+                            </tr>
+                            </thead>
+                            <tbody id="clients-tbody">
+                                <tr><td colspan="5" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ABONNEMENT -->
+                <div class="card-compact">
+                    <h3>📅 Table ABONNEMENT</h3>
+                    <p>Abonnements actifs ou expirés.</p>
+                    <button id="btn-refresh-abonnements" class="btn-small">🔄 Rafraîchir</button>
+                    <button id="btn-add-abonne" class="btn-small">➕ Ajouter</button>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ID_CLIENT</th>
+                                <th>DÉBUT</th>
+                                <th>FIN</th>
+                                <th>STATUT</th>
+                            </tr>
+                            </thead>
+                            <tbody id="abonnements-tbody">
+                                <tr><td colspan="5" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PLACE -->
+                <div class="card-compact">
+                    <h3>🅿️ Table PLACE</h3>
+                    <p>Gestion des emplacements (standard, VIP, PMR…).</p>
+                    <button id="btn-refresh-places" class="btn-small">🔄 Rafraîchir</button>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NUMÉRO</th>
+                                <th>DISPONIBLE</th>
+                                <th>TYPE</th>
+                            </tr>
+                            </thead>
+                            <tbody id="places-tbody">
+                                <tr><td colspan="4" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TARIF -->
+                <div class="card-compact">
+                    <h3>💰 Table TARIF</h3>
+                    <p>Tarifs horaires selon le type de client.</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>TYPE</th>
+                                <th>TARIF/h</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tarifs-tbody">
+                                    <tr>
+                                        <td colspan="3" style="text-align:center; color:#6b7280;">
+                                            Chargement...
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+                <!-- RESERVATION -->
+                <div class="card-compact">
+                    <h3>🎟️ Table RESERVATION</h3>
+                    <p>Réservations en cours, en attente ou terminées.</p>
+                    <button id="btn-refresh-reservations" class="btn-small">🔄 Rafraîchir</button>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>CLIENT</th>
+                                <th>PLACE</th>
+                                <th>ENTRÉE</th>
+                                <th>SORTIE</th>
+                                <th>STATUT</th>
+                            </tr>
+                            </thead>
+                            <tbody id="reservations-tbody">
+                                <tr><td colspan="6" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAIEMENT -->
+                <div class="card-compact">
+                    <h3>💳 Table PAIEMENT</h3>
+                    <p>Historique de tous les paiements enregistrés.</p>
+                    <button id="btn-refresh-all-paiements" class="btn-small">🔄 Rafraîchir</button>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>RES.</th>
+                                <th>DATE</th>
+                                <th>MONTANT</th>
+                                <th>MODE</th>
+                                <th>STATUT</th>
+                            </tr>
+                            </thead>
+                            <tbody id="all-paiements-tbody">
+                                <tr><td colspan="6" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        © 2025 Parking Smart — Vue agent | Connecté à API Flask
+    </footer>
+</div>
+
+<!-- MODAL: Ajouter un abonné -->
+<div id="modal-add-abonne" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal('modal-add-abonne')">&times;</button>
+    <div class="modal-header">➕ Créer un abonnement</div>
+
+    <form id="form-add-abonne" style="margin-top:16px;">
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Nom</label>
+        <input class="input" type="text" id="abonne-nom" required>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Prénom</label>
+        <input class="input" type="text" id="abonne-prenom" required>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Téléphone</label>
+        <input class="input" type="tel" id="abonne-telephone" required>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">PMR (Personne à Mobilité Réduite)</label>
+        <select class="select" id="abonne-pmr">
+          <option value="N">Non</option>
+          <option value="O">Oui</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-gradient">Créer l'abonnement</button>
+    </form>
+  </div>
+</div>
+
+
+<script>
+/* =========================
+   CONFIG
+========================= */
+const API_BASE = "http://localhost:5000";
+let PMR_FORMAT = "ON"; // "ON" ou "01" (détecté automatiquement)
+
+async function apiCall(endpoint, opts = {}) {
+  const url = API_BASE + endpoint;
+  const options = {
+    method: opts.method || "GET",
+    headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+    body: opts.body,
+  };
+
+  try {
+    const res = await fetch(url, options);
+    const text = await res.text();
+
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch (_) {}
+
+    if (!res.ok) {
+      return {
+        success: false,
+        status: res.status,
+        error: (data && (data.error || data.message)) || text || res.statusText
+      };
+    }
+
+    return data ?? { success: true };
+  } catch (err) {
+    return { success: false, error: err.message || "Failed to fetch" };
+  }
+}
+
+function mkBadge(text, cls) {
+  return `<span class="badge ${cls}">${text}</span>`;
+}
+
+function openModal(id) { document.getElementById(id).classList.add("show"); }
+function closeModal(id) { document.getElementById(id).classList.remove("show"); }
+
+/* =========================
+   HELPERS (PMR / BOOL)
+========================= */
+function detectPmrFormatFromClients(clients) {
+  for (const c of clients) {
+    const v = c.pmr ?? c.PMR;
+    if (typeof v === "number") return "01";
+    if (typeof v === "string") {
+      const up = v.toUpperCase();
+      if (up === "O" || up === "N") return "ON";
+      if (up === "0" || up === "1") return "01";
+    }
+  }
+  return "ON";
+}
+
+function isTrue(val) {
+  if (val === true) return true;
+  if (val === 1) return true;
+  if (typeof val === "string") {
+    const up = val.toUpperCase();
+    return (up === "O" || up === "YES" || up === "TRUE" || up === "1");
+  }
+  return false;
+}
+
+/* =========================
+   LOADERS
+========================= */
+async function loadClients() {
+  const res = await apiCall("/clients");
+  const tbody = document.getElementById("clients-tbody");
+  tbody.innerHTML = "";
+
+  if (!res.success) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#ef4444;">❌ ${res.error}</td></tr>`;
+    return;
+  }
+
+  const clients = res.data || [];
+  PMR_FORMAT = detectPmrFormatFromClients(clients);
+
+  if (clients.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9ca3af;">Aucun client</td></tr>`;
+    return;
+  }
+
+  for (const c of clients) {
+    const pmrRaw = c.pmr ?? c.PMR ?? 0;
+    const pmrBadge = isTrue(pmrRaw) ? mkBadge("PMR", "badge-green") : mkBadge("Non", "badge-blue");
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${c.id_client ?? c.ID_CLIENT ?? "—"}</td>
+        <td>${c.nom ?? c.NOM ?? "—"}</td>
+        <td>${c.prenom ?? c.PRENOM ?? "—"}</td>
+        <td>${c.telephone ?? c.TELEPHONE ?? "—"}</td>
+        <td>${pmrBadge}</td>
+      </tr>
+    `;
+  }
+}
+
+async function loadAbonnements() {
+  const res = await apiCall("/abonnements");
+  const tbody = document.getElementById("abonnements-tbody");
+  tbody.innerHTML = "";
+
+  if (!res.success) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#ef4444;">❌ ${res.error}</td></tr>`;
+    return;
+  }
+
+  const arr = res.data || [];
+  if (arr.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9ca3af;">Aucun abonnement</td></tr>`;
+    return;
+  }
+
+  for (const a of arr) {
+    const id = a.id_abonne ?? a.ID_ABONNE ?? "—";
+    const idClient = a.id_client ?? a.ID_CLIENT ?? "—";
+    const debut = a.date_inscription ?? a.DATE_INSCRIPTION ?? "—";
+    const fin = a.date_expiration ?? a.DATE_EXPIRATION ?? "—";
+
+    const statutTxt = (a.statut ?? a.STATUT ?? "").toString();
+    const isActif = statutTxt.toLowerCase().includes("actif");
+    const badge = isActif ? mkBadge("Actif","badge-green") : mkBadge("Expiré","badge-red");
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${id}</td>
+        <td>${idClient}</td>
+        <td>${debut}</td>
+        <td>${fin}</td>
+        <td>${badge}</td>
+      </tr>
+    `;
+  }
+}
+
+async function loadPlaces() {
+  const res = await apiCall("/places");
+  const tbody = document.getElementById("places-tbody");
+  tbody.innerHTML = "";
+
+  if (!res.success) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#ef4444;">❌ ${res.error}</td></tr>`;
+    return;
+  }
+  const arr = res.data || [];
+  if (arr.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#9ca3af;">Aucune place</td></tr>`;
+    return;
+  }
+
+  for (const p of arr) {
+    const dispo = isTrue(p.disponible ?? p.DISPONIBLE);
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.id_place ?? p.ID_PLACE ?? "—"}</td>
+        <td>${p.numero_place ?? p.NUMERO_PLACE ?? "—"}</td>
+        <td>${dispo ? mkBadge("Libre","badge-green") : mkBadge("Occupée","badge-red")}</td>
+        <td>${p.type_place ?? p.TYPE_PLACE ?? "—"}</td>
+      </tr>
+    `;
+  }
+}
+
+async function loadReservations() {
+  const res = await apiCall("/reservations");
+  const tbody = document.getElementById("reservations-tbody");
+  tbody.innerHTML = "";
+
+  if (!res.success) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#ef4444;">❌ ${res.error}</td></tr>`;
+    return;
+  }
+  const arr = res.data || [];
+  if (arr.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#9ca3af;">Aucune réservation</td></tr>`;
+    return;
+  }
+
+  for (const r of arr) {
+    const terminee = !!(r.date_sortie ?? r.DATE_SORTIE);
+    tbody.innerHTML += `
+      <tr>
+        <td>${r.id_reservation ?? r.ID_RESERVATION ?? "—"}</td>
+        <td>${(r.nom ?? r.NOM ?? "")} ${(r.prenom ?? r.PRENOM ?? "")}</td>
+        <td>${r.numero_place ?? r.NUMERO_PLACE ?? "—"}</td>
+        <td>${r.date_entree ?? r.DATE_ENTREE ?? "—"}</td>
+        <td>${r.date_sortie ?? r.DATE_SORTIE ?? "—"}</td>
+        <td>${terminee ? mkBadge("Terminée","badge-green") : mkBadge("En cours","badge-yellow")}</td>
+      </tr>
+    `;
+  }
+}
+
+/* Tickets récents : si tu n'as pas /tickets, on réutilise /reservations */
+async function loadTickets() {
+  const res = await apiCall("/reservations");
+  const tbody = document.getElementById("tickets-tbody");
+  tbody.innerHTML = "";
+
+  if (!res.success) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#ef4444;">❌ ${res.error}</td></tr>`;
+    return;
+  }
+  const arr = (res.data || []).slice(0, 8);
+  if (arr.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9ca3af;">Aucun ticket</td></tr>`;
+    return;
+  }
+
+  for (const r of arr) {
+    const terminee = !!(r.date_sortie ?? r.DATE_SORTIE);
+    tbody.innerHTML += `
+      <tr>
+        <td>${r.id_reservation ?? r.ID_RESERVATION ?? "—"}</td>
+        <td>${(r.nom ?? r.NOM ?? "")} ${(r.prenom ?? r.PRENOM ?? "")}</td>
+        <td>${r.numero_place ?? r.NUMERO_PLACE ?? "—"}</td>
+        <td>${r.date_entree ?? r.DATE_ENTREE ?? "—"}</td>
+        <td>${terminee ? mkBadge("Terminé","badge-green") : mkBadge("En cours","badge-yellow")}</td>
+      </tr>
+    `;
+  }
+}
+
+async function loadPaiementsRecents() {
+  const res = await apiCall("/paiements");
+  const tbody = document.getElementById("paiements-tbody");
+  tbody.innerHTML = "";
+
+  if (!res.success) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#ef4444;">❌ ${res.error}</td></tr>`;
+    return;
+  }
+  const arr = (res.data || []).slice(0, 8);
+  if (arr.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9ca3af;">Aucun paiement</td></tr>`;
+    return;
+  }
+
+  for (const p of arr) {
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.id_paiement ?? p.ID_PAIEMENT ?? "—"}</td>
+        <td>${p.id_reservation ?? p.ID_RESERVATION ?? "—"}</td>
+        <td>${(p.montant ?? p.MONTANT ?? "—")} MAD</td>
+        <td>${p.mode ?? p.MODE ?? p.MODE_PAIEMENT ?? "—"}</td>
+        <td>${mkBadge(p.statut ?? p.STATUT ?? "Effectué","badge-green")}</td>
+      </tr>
+    `;
+  }
+}
+async function loadAllPaiements() {
+  const res = await apiCall("/paiements");
+  const tbody = document.getElementById("all-paiements-tbody");
+  tbody.innerHTML = "";
+
+  if (!res.success) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#ef4444;">❌ ${res.error}</td></tr>`;
+    return;
+  }
+
+  const arr = res.data || [];
+  if (arr.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#9ca3af;">Aucun paiement</td></tr>`;
+    return;
+  }
+
+  for (const p of arr) {
+    const idPay = p.id_paiement ?? p.ID_PAIEMENT ?? "—";
+    const idRes = p.id_reservation ?? p.ID_RESERVATION ?? "—";
+    const date = p.date_paiement ?? p.DATE_PAIEMENT ?? "—";
+    const montant = p.montant ?? p.MONTANT ?? "—";
+    const mode = p.mode_paiement ?? p.MODE_PAIEMENT ?? p.mode ?? p.MODE ?? "—";
+    const statut = p.statut ?? p.STATUT ?? "Effectué";
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${idPay}</td>
+        <td>${idRes}</td>
+        <td>${date}</td>
+        <td>${montant} MAD</td>
+        <td>${mode}</td>
+        <td>${mkBadge(statut,"badge-green")}</td>
+      </tr>
+    `;
+  }
+}
+
+
+async function loadAll() {
+  await Promise.all([
+    loadClients(),
+    loadAbonnements(),
+    loadPlaces(),
+    loadReservations(),
+    loadTickets(),
+    loadPaiementsRecents(),
+    loadAllPaiements()
+  ]);
+}
+
+/* =========================
+   EVENTS
+========================= */
+document.getElementById("btn-test-api").addEventListener("click", async () => {
+  const res = await apiCall("/test-connexion");
+  alert(res.success ? ("✅ API OK\n" + (res.message ?? "")) : ("❌ " + res.error));
+});
+
+document.getElementById("btn-refresh-clients").addEventListener("click", loadClients);
+document.getElementById("btn-refresh-abonnements").addEventListener("click", loadAbonnements);
+document.getElementById("btn-refresh-places").addEventListener("click", loadPlaces);
+document.getElementById("btn-refresh-reservations").addEventListener("click", loadReservations);
+document.getElementById("btn-refresh-tickets").addEventListener("click", loadTickets);
+document.getElementById("btn-refresh-paiements").addEventListener("click", loadPaiementsRecents);
+document.getElementById("btn-refresh-all-paiements").addEventListener("click", loadAllPaiements);
+
+document.getElementById("btn-add-abonne").addEventListener("click", () => openModal("modal-add-abonne"));
+
+/* Entrée : ✅ correction téléphone + PMR adaptatif */
+document.getElementById("form-entree").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const nom = document.getElementById("entree-nom").value.trim();
+  const prenom = document.getElementById("entree-prenom").value.trim();
+  const telephoneRaw = document.getElementById("entree-telephone").value.trim();
+  const pmrChoice = document.getElementById("entree-pmr").value; // "O" / "N"
+
+  const telephone = telephoneRaw.replace(/\D/g, ""); // garde فقط chiffres
+  if (!telephone || telephone.length < 8) {
+    alert("❌ Téléphone invalide (mets uniquement des chiffres, ex: 0787469755)");
+    return;
+  }
+
+  // Envoie le format attendu par ton backend (détecté via /clients)
+  const pmrPayload = (PMR_FORMAT === "01") ? (pmrChoice === "O" ? 1 : 0) : pmrChoice;
+
+  const res = await apiCall("/entree", {
+    method: "POST",
+    body: JSON.stringify({ nom, prenom, telephone, pmr: pmrPayload })
+  });
+
+  if (!res.success) {
+    alert("❌ Erreur entrée: " + res.error);
+    console.error("Erreur /entree:", res);
+    return;
+  }
+
+  alert("✅ Entrée enregistrée\n🎫 Ticket généré");
+  document.getElementById("form-entree").reset();
+  await loadAll();
+});
+
+/* Sortie : appelle vraiment l’API (si ton backend a POST /sortie) */
+document.getElementById("form-sortie").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const id_ticket = document.getElementById("sortie-ticket").value.trim();
+  const mode_paiement = document.getElementById("sortie-mode").value;
+
+  if (!id_ticket) {
+    alert("❌ Veuillez entrer un ID ticket");
+    return;
+  }
+
+  const res = await apiCall("/sortie", {
+    method: "POST",
+    body: JSON.stringify({ id_ticket, mode_paiement })
+  });
+
+  if (!res.success) {
+    alert("❌ Erreur sortie: " + res.error);
+    return;
+  }
+
+  alert("✅ Sortie validée");
+  document.getElementById("form-sortie").reset();
+  await loadAll();
+});
+
+/* Ajouter abonnement : appelle l’API (si ton backend a POST /abonnements) */
+document.getElementById("form-add-abonne").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const nom = document.getElementById("abonne-nom").value.trim();
+  const prenom = document.getElementById("abonne-prenom").value.trim();
+  const telephoneRaw = document.getElementById("abonne-telephone").value.trim();
+  const pmr = document.getElementById("abonne-pmr").value; // "O" / "N"
+
+  const telephone = telephoneRaw.replace(/\D/g, "");
+  if (!nom || !prenom || !telephone) {
+    alert("❌ Remplis nom / prénom / téléphone");
+    return;
+  }
+
+  const res = await apiCall("/abonner", {
+    method: "POST",
+    body: JSON.stringify({ nom, prenom, telephone, pmr })
+  });
+
+  if (!res.success) {
+    alert("❌ Erreur abonnement: " + res.error);
+    return;
+  }
+
+  alert("✅ Abonnement créé");
+  closeModal("modal-add-abonne");
+  document.getElementById("form-add-abonne").reset();
+  await loadAbonnements();
+  await loadClients();
+});
+async function loadTarifs() {
+    const res = await apiCall('/tarifs');
+    const tbody = document.getElementById('tarifs-tbody');
+    tbody.innerHTML = '';
+
+    if (!res.success) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" style="text-align:center; color:#ef4444;">
+                    ❌ Erreur
+                </td>
+            </tr>`;
+        return;
+    }
+
+    if (!res.data || res.data.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" style="text-align:center; color:#9ca3af;">
+                    Aucun tarif
+                </td>
+            </tr>`;
+        return;
+    }
+
+    res.data.forEach(t => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${t.ID_TARIF}</td>
+                <td>${t.TYPE_CLIENT}</td>
+                <td>${Number(t.TARIF_HORAIRE).toFixed(2)} MAD</td>
+            </tr>
+        `;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadTarifs();
+});
+
+ 
+/* INIT */
+loadAll();
+</script>
+
+
+</body>
+</html>

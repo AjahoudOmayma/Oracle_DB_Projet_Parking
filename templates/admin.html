@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Espace Admin - Parking Smart</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #020617;
+            color: #e5e7eb;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        .header {
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1f2937;
+            background: #020617;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-text-title {
+            font-weight: 600;
+        }
+
+        .brand-text-sub {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .session-chip {
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(168, 85, 247, 0.12);
+            color: #e9d5ff;
+            font-size: 13px;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 24px 32px 40px;
+            max-width: 1320px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 20px;
+        }
+
+        /* KPI CARDS */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        .kpi-card {
+            background: #020617;
+            border-radius: 18px;
+            padding: 16px 18px 14px;
+            border: 1px solid #1f2937;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .kpi-header {
+            margin-bottom: 10px;
+        }
+
+        .kpi-card-title {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+
+        .kpi-main {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .kpi-sub {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .kpi-chart {
+            margin-top: 4px;
+        }
+
+        .sparkline {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 38px;
+        }
+
+        .spark-bar {
+            flex: 1;
+            border-radius: 999px 999px 0 0;
+            background: linear-gradient(180deg, #22c55e, #16a34a);
+            opacity: 0.85;
+        }
+
+        .spark-bar.blue {
+            background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+        }
+
+        .spark-bar.red {
+            background: linear-gradient(180deg, #fb7185, #b91c1c);
+        }
+
+        .spark-caption {
+            margin-top: 2px;
+            font-size: 10px;
+            color: #6b7280;
+        }
+
+        /* SECTIONS */
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 16px;
+        }
+
+        .grid-tables {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card-compact {
+            padding: 16px 16px 12px;
+            border-radius: 16px;
+            border: 1px solid #1f2937;
+            background: #020617;
+        }
+
+        .btn-small {
+            border-radius: 999px;
+            border: 1px solid #374151;
+            background: #020617;
+            color: #e5e7eb;
+            font-size: 11px;
+            padding: 4px 10px;
+            cursor: pointer;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-small:hover {
+            background: #1f2937;
+            border-color: #4b5563;
+        }
+
+        .btn-primary {
+            border-radius: 999px;
+            border: none;
+            padding: 9px 18px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 18px;
+            margin-right: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .table-wrapper {
+            margin-top: 12px;
+            max-height: 280px;
+            overflow: auto;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th, td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #111827;
+            text-align: left;
+        }
+
+        th {
+            background: #0b1220;
+            font-weight: 600;
+            color: #d1d5db;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: rgba(168, 85, 247, 0.08);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 9px;
+            border-radius: 999px;
+            font-size: 10px;
+        }
+
+        .badge-green {
+            background: rgba(22, 163, 74, 0.2);
+            color: #4ade80;
+        }
+
+        .badge-red {
+            background: rgba(220, 38, 38, 0.18);
+            color: #fda4af;
+        }
+
+        .badge-blue {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+
+        .badge-yellow {
+            background: rgba(250, 204, 21, 0.12);
+            color: #fef08a;
+        }
+
+        /* FORM STYLES */
+        .form-section {
+            background: #0b1220;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+
+        .input,
+        .select {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #020617;
+            border: 1px solid #1f2937;
+            color: #e5e7eb;
+            font-size: 12px;
+        }
+
+        .input:focus,
+        .select:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.1);
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 10px 32px 18px;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: right;
+            border-top: 1px solid #0f172a;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #0b1220;
+            border: 1px solid #1f2937;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #9ca3af;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .modal-close:hover {
+            color: #e5e7eb;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-top-color: #a855f7;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 900px) {
+            .kpi-row { grid-template-columns: 1fr; }
+            .grid-tables { grid-template-columns: 1fr; }
+            .form-row { flex-direction: column; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="brand">
+            <div class="brand-logo">AD</div>
+            <div class="brand-text">
+                <span class="brand-text-title">Parking Smart</span>
+                <span class="brand-text-sub">Tableau de bord administrateur</span>
+            </div>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <button id="btn-test" class="btn-small">🔌 Test API</button>
+            <a href="{{ url_for('logout') }}" class="logout-btn"> 
+                <i class="bi bi-box-arrow-right"></i>
+                 <span>Déconnexion</span> </a>
+</a>
+            <div class="session-chip">Connecté en tant qu'ADMIN</div>
+        </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+        <h1 class="page-title">Vue globale</h1>
+        <p class="page-subtitle">Statistiques en temps réel du système de parking.</p>
+
+        <!-- KPIs -->
+        <section class="kpi-row">
+            <!-- KPI CLIENTS -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-card-title">Clients totaux</div>
+                    <div id="kpi-clients" class="kpi-main">—</div>
+                    <div class="kpi-sub">Dont abonnés : <span id="kpi-abonnes">—</span></div>
+                </div>
+                <div class="kpi-chart">
+                    <div class="sparkline">
+                        <div class="spark-bar" style="height:45%"></div>
+                        <div class="spark-bar" style="height:60%"></div>
+                        <div class="spark-bar" style="height:55%"></div>
+                        <div class="spark-bar" style="height:70%"></div>
+                        <div class="spark-bar" style="height:80%"></div>
+                        <div class="spark-bar" style="height:75%"></div>
+                        <div class="spark-bar" style="height:85%"></div>
+                    </div>
+                    <div class="spark-caption">Évolution du nombre de clients</div>
+                </div>
+            </div>
+
+            <!-- KPI OCCUPATION -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-card-title">Taux d'occupation</div>
+                    <div id="kpi-occupation" class="kpi-main">—</div>
+                    <div class="kpi-sub">Places libres : <span id="kpi-libres">—</span></div>
+                </div>
+                <div class="kpi-chart">
+                    <div class="sparkline">
+                        <div class="spark-bar blue" style="height:65%"></div>
+                        <div class="spark-bar blue" style="height:70%"></div>
+                        <div class="spark-bar blue" style="height:50%"></div>
+                        <div class="spark-bar blue" style="height:80%"></div>
+                        <div class="spark-bar blue" style="height:75%"></div>
+                        <div class="spark-bar blue" style="height:68%"></div>
+                        <div class="spark-bar blue" style="height:72%"></div>
+                    </div>
+                    <div class="spark-caption">Occupation moyenne / jour</div>
+                </div>
+            </div>
+
+            <!-- KPI REVENUS -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-card-title">Revenus du jour</div>
+                    <div id="kpi-revenu" class="kpi-main">—</div>
+                    <div class="kpi-sub">Paiements validés : <span id="kpi-paiements">—</span></div>
+                </div>
+                <div class="kpi-chart">
+                    <div class="sparkline">
+                        <div class="spark-bar red" style="height:40%"></div>
+                        <div class="spark-bar red" style="height:55%"></div>
+                        <div class="spark-bar red" style="height:35%"></div>
+                        <div class="spark-bar red" style="height:70%"></div>
+                        <div class="spark-bar red" style="height:60%"></div>
+                        <div class="spark-bar red" style="height:75%"></div>
+                        <div class="spark-bar red" style="height:65%"></div>
+                    </div>
+                    <div class="spark-caption">Revenus journaliers</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TABLE SECTION -->
+        <section style="margin-top: 12px;">
+            <h2 class="section-title">Données du parking</h2>
+            <p class="section-subtitle">Gérez tous les éléments du système en temps réel.</p>
+
+            <div class="grid-tables">
+
+                <!-- CLIENT -->
+                <div class="card-compact">
+                    <h3 style="margin-bottom: 8px;">👥 CLIENT</h3>
+                    <p style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">Gestion des informations clients.</p>
+                    <button id="btn-refresh-clients" class="btn-small">🔄 Rafraîchir</button>
+                    <button id="btn-add-client" class="btn-small">➕ Ajouter</button>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>NOM</th>
+                                    <th>PRÉNOM</th>
+                                    <th>TÉLÉPHONE</th>
+                                    <th>PMR</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clients-tbody">
+                                <tr><td colspan="6" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ABONNEMENT -->
+                <div class="card-compact">
+                    <h3 style="margin-bottom: 8px;">📅 ABONNEMENT</h3>
+                    <p style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">Suivi des abonnements et statut.</p>
+                    <button id="btn-refresh-abonnements" class="btn-small">🔄 Rafraîchir</button>
+                    <button id="btn-add-abonnement" class="btn-small">➕ Ajouter</button>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID_ABONNE</th>
+                                    <th>ID_CLIENT</th>
+                                    <th>DÉBUT</th>
+                                    <th>FIN</th>
+                                    <th>STATUT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="abonnements-tbody">
+                                <tr><td colspan="5" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+               
+                        
+                            
+                <!-- PLACE -->
+                <div class="card-compact">
+                    <h3 style="margin-bottom: 8px;">🅿️ PLACE</h3>
+                    <p style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">Configuration des emplacements.</p>
+                    <button id="btn-refresh-places" class="btn-small">🔄 Rafraîchir</button>
+                    <button id="btn-dispo" class="btn-small">📍 Disponibles</button>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID_PLACE</th>
+                                    <th>NUMÉRO</th>
+                                    <th>TYPE</th>
+                                    <th>DISPONIBLE</th>
+                                </tr>
+                            </thead>
+                            <tbody id="places-tbody">
+                                <tr><td colspan="4" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+               <!-- TARIF -->
+<div class="card-compact">
+    <h3 style="margin-bottom: 8px;">💰 TARIF</h3>
+    <p style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">Gestion des tarifs horaires.</p>
+    <button id="btn-update-tarif" class="btn-small">⚙️ Mettre à jour</button>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID_TARIF</th>
+                    <th>TYPE_CLIENT</th>
+                    <th>TARIF_HORAIRE</th>
+                </tr>
+            </thead>
+            <tbody id="tarifs-tbody">
+                <!-- Les données seront chargées dynamiquement ici -->
+            </tbody>
+        </table>
+    </div>
+</div>
+                <!-- RESERVATION -->
+                <div class="card-compact">
+                    <h3 style="margin-bottom: 8px;">🎟️ RESERVATION</h3>
+                    <p style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">Suivi des réservations.</p>
+                    <button id="btn-refresh-reservations" class="btn-small">🔄 Rafraîchir</button>
+                    <button class="btn-small">🔍 Filtrer</button>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID_RES.</th>
+                                    <th>ID_CLIENT</th>
+                                    <th>PLACE</th>
+                                    <th>ENTRÉE</th>
+                                    <th>SORTIE</th>
+                                    <th>STATUT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservations-tbody">
+                                <tr><td colspan="6" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAIEMENT -->
+                <div class="card-compact">
+                    <h3 style="margin-bottom: 8px;">💳 PAIEMENT</h3>
+                    <p style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">Contrôle des encaissements.</p>
+                    <button id="btn-refresh-paiements" class="btn-small">🔄 Rafraîchir</button>
+                    <button class="btn-small">📊 Détail par jour</button>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID_PAIEMENT</th>
+                                    <th>ID_RES.</th>
+                                    <th>DATE</th>
+                                    <th>MONTANT</th>
+                                    <th>MODE</th>
+                                    <th>STATUT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paiements-tbody">
+                                <tr><td colspan="6" style="text-align: center; color: #6b7280;">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <button id="btn-auto-refresh" class="btn-primary">🔄 Auto-refresh</button>
+            <button id="btn-save-all" class="btn-primary">💾 Sauvegarder</button>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        © 2025 Parking Smart — Tableau de bord administrateur | Connecté à API Flask
+    </footer>
+</div>
+
+<!-- MODALS -->
+<div id="modal-add-client" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('modal-add-client')">&times;</button>
+        <div class="modal-header">Ajouter un client</div>
+        <form id="form-add-client" style="margin-top: 16px;">
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">Nom</label>
+                <input class="input" type="text" id="input-nom" placeholder="Nom du client" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">Prénom</label>
+                <input class="input" type="text" id="input-prenom" placeholder="Prénom du client" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">Téléphone</label>
+                <input class="input" type="tel" id="input-telephone" placeholder="Téléphone" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">PMR (Personne à Mobilité Réduite)</label>
+                <select class="select" id="input-pmr">
+                    <option value="N">Non</option>
+                    <option value="O">Oui</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 12px;">Ajouter</button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL D'ÉDITION -->
+<div id="modal-edit-client" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('modal-edit-client')">&times;</button>
+        <div class="modal-header">Modifier le client</div>
+        <form id="form-edit-client" style="margin-top: 16px;">
+            <input type="hidden" id="edit-client-id">
+            
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">Nom</label>
+                <input class="input" type="text" id="edit-nom" placeholder="Nom du client" required>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">Prénom</label>
+                <input class="input" type="text" id="edit-prenom" placeholder="Prénom du client" required>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">Téléphone</label>
+                <input class="input" type="tel" id="edit-telephone" placeholder="Téléphone" required>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">PMR (Personne à Mobilité Réduite)</label>
+                <select class="select" id="edit-pmr">
+                    <option value="N">Non</option>
+                    <option value="O">Oui</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn-small" onclick="closeModal('modal-edit-client')" style="flex: 1;">Annuler</button>
+                <button type="submit" class="btn-primary" style="flex: 2;">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- MODAL ADD ABONNEE -->
+     <div id="modal-add-abonnement" class="modal hidden">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('modal-add-abonnement')">&times;</button>
+        <div class="modal-header">➕ Nouvel abonnement</div>
+        <form id="form-add-abonnement" style="margin-top: 16px;">
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">Nom</label>
+                <input class="input" type="text" id="abo-nom" placeholder="Nom du client" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">Prénom</label>
+                <input class="input" type="text" id="abo-prenom" placeholder="Prénom du client" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">Téléphone</label>
+                <input class="input" type="text" id="abo-telephone" placeholder="Téléphone" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label class="form-label">PMR (Personne à Mobilité Réduite)</label>
+                <select class="select" id="abo-pmr">
+                    <option value="N">Non</option>
+                    <option value="O">Oui</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 12px;">Ajouter</button>
+        </form>
+    </div>
+</div>
+<!-- MODAL “METTRE À JOUR TARIFS -->
+ <div id="modal-update-tarif" class="modal">
+  <div class="modal-content">
+
+    <button class="modal-close"
+      onclick="closeModal('modal-update-tarif')">&times;</button>
+
+    <div class="modal-header">⚙️ Mise à jour des tarifs</div>
+
+    <form id="form-update-tarif">
+
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Tarif Abonné (MAD / heure)</label>
+        <input id="tarif-abonne" class="input"
+               type="number" step="0.01" min="0" required>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Tarif Non Abonné (MAD / heure)</label>
+        <input id="tarif-non-abonne" class="input"
+               type="number" step="0.01" min="0" required>
+      </div>
+
+      <button type="submit" class="btn-primary" style="width:100%;">
+        Enregistrer
+      </button>
+
+    </form>
+  </div>
+</div>
+
+                 
+<script>
+/* ============================================
+   API CLIENT - Global Helper
+   ============================================ */
+const API_BASE = 'http://localhost:5000';
+let autoRefreshInterval = null;
+
+async function apiCall(endpoint, opts = {}) {
+    const url = API_BASE + endpoint;
+    try {
+        const res = await fetch(url, {
+            headers: { 'Content-Type': 'application/json', ...opts.headers },
+            ...opts
+        });
+        return await res.json();
+    } catch (err) {
+        console.error('API Error:', err);
+        return { success: false, error: err.message };
+    }
+}
+
+function mkBadge(text, cls = 'badge-blue') {
+    return `<span class="badge ${cls}">${text}</span>`;
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('show');
+}
+
+function openModal(id) {
+    document.getElementById(id).classList.add('show');
+}
+
+/* ============================================
+   LOAD FUNCTIONS
+   ============================================ */
+async function loadStats() {
+    const res = await apiCall('/statistiques');
+    if (res.success && res.data) {
+        document.getElementById('kpi-clients').textContent = res.data.total_clients ?? '—';
+        document.getElementById('kpi-abonnes').textContent = res.data.total_abonnes ?? '—';
+        document.getElementById('kpi-occupation').textContent = (res.data.taux_occupation !== undefined) ? `${res.data.taux_occupation}%` : '—';
+        document.getElementById('kpi-libres').textContent = res.data.taux_places_libres ?? '—';
+        document.getElementById('kpi-revenu').textContent = (res.data.revenu_du_jour !== undefined) ? `${res.data.revenu_du_jour} MAD` : '—';
+        document.getElementById('kpi-paiements').textContent = res.data.nombre_paiements_valides ?? '—';
+    }
+}
+
+async function loadClients() {
+    const res = await apiCall('/clients');
+    const tbody = document.getElementById('clients-tbody');
+    tbody.innerHTML = '';
+    
+    if (!res.success) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444;">Erreur: ${res.error}</td></tr>`;
+        return;
+    }
+    
+    if (!res.data || res.data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9ca3af;">Aucun client</td></tr>`;
+        return;
+    }
+    
+    res.data.forEach(c => {
+        // Correction de la vérification PMR
+        const pmrValue = c.pmr || c.PMR || 'N';
+        const pmr = (pmrValue === 'O' || pmrValue === 'o') 
+            ? mkBadge('PMR', 'badge-green') 
+            : mkBadge('Non', 'badge-blue');
+        
+        const clientId = c.id_client ?? c.ID_CLIENT ?? '—';
+        
+        tbody.innerHTML += `<tr data-client-id="${clientId}">
+            <td>${clientId}</td>
+            <td>${c.nom ?? c.NOM ?? '—'}</td>
+            <td>${c.prenom ?? c.PRENOM ?? '—'}</td>
+            <td>${c.telephone ?? c.TELEPHONE ?? '—'}</td>
+            <td>${pmr}</td>
+            <td>
+                <div style="display: flex; gap: 6px; justify-content: center;">
+                    <button class="btn-action edit-client" data-id="${clientId}" title="Modifier">
+                        <span style="font-size: 14px;">✏️</span>
+                    </button>
+                    <button class="btn-action delete-client" data-id="${clientId}" title="Supprimer">
+                        <span style="font-size: 14px;">🗑️</span>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+    });
+}
+// SUPPRIMER UN CLIENT
+document.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".delete-client");
+    if (!btn) return;
+
+    const id = btn.dataset.id;
+
+    if (!confirm("❌ Voulez-vous vraiment supprimer ce client ?")) return;
+
+    try {
+        const res = await fetch(`/client/delete/${id}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" }
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+            alert(data.error);
+            return;
+        }
+
+        alert("✅ Client supprimé avec succès");
+        loadClients();       // recharge la table
+        loadStatistics();    // recharge les stats si tu les affiches
+
+    } catch (err) {
+        console.error(err);
+        alert("Erreur lors de la suppression");
+    }
+});
+
+async function loadAbonnements() {
+    const res = await apiCall('/abonnements');
+    const tbody = document.getElementById('abonnements-tbody');
+    tbody.innerHTML = '';
+
+    if (!res.success) {
+        tbody.innerHTML = `
+            <tr><td colspan="5" style="text-align:center;color:#ef4444;">
+                Erreur
+            </td></tr>`;
+        return;
+    }
+
+    if (!res.data || res.data.length === 0) {
+        tbody.innerHTML = `
+            <tr><td colspan="5" style="text-align:center;color:#9ca3af;">
+                Aucun abonnement
+            </td></tr>`;
+        return;
+    }
+
+    res.data.forEach(a => {
+        const statutTxt = a.STATUT ?? a.statut ?? 'Inconnu';
+        const statut = statutTxt === 'Actif'
+            ? mkBadge('Actif', 'badge-green')
+            : mkBadge('Expiré', 'badge-red');
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${a.ID_ABONNE ?? a.id_abonne ?? '—'}</td>
+                <td>${a.ID_CLIENT ?? a.id_client ?? '—'}</td>
+                <td>${formatDate(a.DATE_INSCRIPTION ?? a.date_inscription)}</td>
+                <td>${formatDate(a.DATE_EXPIRATION ?? a.date_expiration)}</td>
+                <td>${statut}</td>
+            </tr>`;
+    });
+}
+function formatDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('fr-FR');
+}
+document.getElementById("btn-refresh-abonnements")
+    .addEventListener("click", loadAbonnements);
+document.getElementById("btn-add-abonnement")
+    .addEventListener("click", () => openModal("modal-add-abonnement"));
+document.getElementById("form-add-abonnement")
+    .addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const payload = {
+            nom: document.getElementById("abo-nom").value.trim(),
+            prenom: document.getElementById("abo-prenom").value.trim(),
+            telephone: document.getElementById("abo-telephone").value.trim(),
+            pmr: document.getElementById("abo-pmr").value
+        };
+
+        const res = await apiCall("/abonner", {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.success) {
+            alert(res.error);
+            return;
+        }
+
+        alert("✅ Abonnement créé");
+        closeModal("modal-add-abonnement");
+        loadAbonnements();
+        loadStats(); // total_abonnes se met à jour
+    });
+
+
+async function loadPlaces(disponibles = false) {
+    const endpoint = disponibles ? '/places/disponibles' : '/places';
+    const res = await apiCall(endpoint);
+    const tbody = document.getElementById('places-tbody');
+    tbody.innerHTML = '';
+    
+    if (!res.success) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #ef4444;">Erreur</td></tr>`;
+        return;
+    }
+    
+    if (!res.data || res.data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #9ca3af;">Aucune place</td></tr>`;
+        return;
+    }
+    
+    res.data.forEach(p => {
+        // Récupérer les valeurs avec tous les formats possibles
+        const id = p.id_place || p.ID_PLACE || p.Id_Place || '—';
+        const numero = p.numero_place || p.NUMERO_PLACE || p.numero || p.NUMERO || '—';
+        const type = p.type_place || p.TYPE_PLACE || p.type || p.TYPE || '—';
+        const disponible = p.disponible || p.DISPONIBLE || 'N';
+        
+        const dispo = (disponible === 'O' || disponible === 'o' || disponible === true || disponible === 1) 
+            ? mkBadge('Oui', 'badge-green') 
+            : mkBadge('Non', 'badge-red');
+        
+        tbody.innerHTML += `<tr>
+            <td>${id}</td>
+            <td>${numero}</td>
+            <td>${type}</td>
+            <td>${dispo}</td>
+        </tr>`;
+    });
+}
+async function loadReservations() {
+    const res = await apiCall('/reservations');
+    const tbody = document.getElementById('reservations-tbody');
+    tbody.innerHTML = '';
+    if (!res.success) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444;">Erreur</td></tr>`;
+        return;
+    }
+    if (!res.data || res.data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9ca3af;">Aucune réservation</td></tr>`;
+        return;
+    }
+    res.data.forEach(r => {
+        const statut = r.date_sortie ? mkBadge('Terminée', 'badge-green') : mkBadge('En cours', 'badge-yellow');
+        tbody.innerHTML += `<tr>
+            <td>${r.id_reservation ?? '—'}</td>
+            <td>${r.id_client ?? '—'}</td>
+            <td>${r.place ?? '—'}</td>
+            <td>${r.date_entree ?? '—'}</td>
+            <td>${r.date_sortie ?? '—'}</td>
+            <td>${statut}</td>
+        </tr>`;
+    });
+}
+
+async function loadPaiements() {
+    const res = await apiCall('/paiements');
+    const tbody = document.getElementById('paiements-tbody');
+    tbody.innerHTML = '';
+    if (!res.success) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444;">Erreur</td></tr>`;
+        return;
+    }
+    if (!res.data || res.data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9ca3af;">Aucun paiement</td></tr>`;
+        return;
+    }
+    res.data.forEach(p => {
+        tbody.innerHTML += `<tr>
+            <td>${p.id_paiement ?? '—'}</td>
+            <td>${p.id_reservation ?? '—'}</td>
+            <td>${p.date_paiement ?? '—'}</td>
+            <td>${p.montant ?? '—'} MAD</td>
+            <td>${p.mode ?? '—'}</td>
+            <td>${mkBadge(p.statut ?? 'Effectué', 'badge-green')}</td>
+        </tr>`;
+    });
+}
+
+async function loadAll() {
+    await Promise.all([loadStats(), loadClients(), loadAbonnements(), loadPlaces(), loadReservations(), loadPaiements()]);
+}
+
+/* ============================================
+   EVENT LISTENERS
+   ============================================ */
+
+// Test API button
+document.getElementById('btn-test').addEventListener('click', async () => {
+    const res = await apiCall('/test-connexion');
+    if (res.success) {
+        alert('✅ API OK\n' + res.message);
+    } else {
+        alert('❌ API Error: ' + res.error);
+    }
+});
+
+// Refresh buttons
+document.getElementById('btn-refresh-clients').addEventListener('click', loadClients);
+document.getElementById('btn-refresh-abonnements').addEventListener('click', loadAbonnements);
+document.getElementById('btn-refresh-places').addEventListener('click', () => loadPlaces(false));
+document.getElementById('btn-dispo').addEventListener('click', () => loadPlaces(true));
+document.getElementById('btn-refresh-reservations').addEventListener('click', loadReservations);
+document.getElementById('btn-refresh-paiements').addEventListener('click', loadPaiements);
+
+// Add client button
+document.getElementById('btn-add-client').addEventListener('click', () => {
+    openModal('modal-add-client');
+});
+
+// Add client form
+document.getElementById('form-add-client').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nom = document.getElementById('input-nom').value.trim();
+    const prenom = document.getElementById('input-prenom').value.trim();
+    const telephone = document.getElementById('input-telephone').value.trim();
+    const pmr = document.getElementById('input-pmr').value; // ✅ CORRECT
+
+    const res = await apiCall('/client/add', {
+        method: 'POST',
+        body: JSON.stringify({ nom, prenom, telephone, pmr })
+    });
+
+    if (res.success) {
+        alert('✅ Client ajouté');
+        closeModal('modal-add-client');
+        document.getElementById('form-add-client').reset();
+        await loadClients();
+        await loadStats();
+    } else {
+        alert('❌ Erreur: ' + res.error);
+    }
+});
+
+
+// Save all
+document.getElementById('btn-save-all').addEventListener('click', async () => {
+    alert('💾 Données sauvegardées avec succès');
+});
+
+// Auto-refresh toggle
+document.getElementById('btn-auto-refresh').addEventListener('click', function() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+        this.textContent = '🔄 Auto-refresh';
+        this.style.opacity = '1';
+    } else {
+        loadAll();
+        autoRefreshInterval = setInterval(loadAll, 5000); // refresh every 5 sec
+        this.textContent = '⏸ Auto-refresh (ON)';
+        this.style.opacity = '0.7';
+    }
+});
+
+// Close modals on background click
+window.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal')) {
+        e.target.classList.remove('show');
+    }
+});
+
+// Initial load
+loadAll();
+</script>
+<script>
+// Configuration de base
+const API_BASE_URL = 'http://localhost:5000';
+
+// Fonctions utilitaires pour les appels API
+async function apiCall(endpoint, options = {}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            },
+            ...options
+        });
+        
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Erreur API:', error);
+        showNotification('Erreur de connexion au serveur', 'error');
+        return { success: false, error: error.message };
+    }
+}
+
+// Fonction pour afficher les notifications
+function showNotification(message, type = 'info') {
+    // Créer une notification (vous pouvez utiliser une librairie comme Toastify)
+    alert(`${type.toUpperCase()}: ${message}`);
+}
+
+// Chargement initial des données
+document.addEventListener('DOMContentLoaded', function() {
+    loadInitialData();
+});
+</script>
+<script>
+// Fonctions pour l'interface admin
+async function loadInitialData() {
+    await loadStatistics();
+    await loadReservations();
+    await loadPaiements();
+}
+
+// Charger les statistiques
+async function loadStatistics() {
+    const data = await apiCall('/statistiques');
+    if (data.success) {
+        document.getElementById('total-clients').textContent = data.data.total_clients;
+        document.getElementById('total-abonnes').textContent = data.data.total_abonnes;
+        document.getElementById('taux-occupation').textContent = data.data.taux_occupation + '%';
+        document.getElementById('taux-libres').textContent = data.data.taux_places_libres + '%';
+        document.getElementById('revenu-jour').textContent = data.data.revenu_du_jour + ' €';
+        document.getElementById('paiements-valides').textContent = data.data.nombre_paiements_valides;
+    }
+}
+
+// Charger les réservations
+async function loadReservations() {
+    const data = await apiCall('/reservations?en_cours=true');
+    if (data.success) {
+        const tbody = document.getElementById('reservations-body');
+        tbody.innerHTML = '';
+        
+        data.data.forEach(reservation => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${reservation.id_reservation}</td>
+                <td>${reservation.nom} ${reservation.prenom}</td>
+                <td>${reservation.numero_place}</td>
+                <td>${reservation.type_place}</td>
+                <td>${new Date(reservation.date_entree).toLocaleString()}</td>
+                <td>${reservation.date_sortie ? new Date(reservation.date_sortie).toLocaleString() : 'En cours'}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+}
+
+// Charger les paiements
+async function loadPaiements() {
+    const today = new Date().toISOString().split('T')[0];
+    const data = await apiCall(`/paiements?date_debut=${today}&date_fin=${today}`);
+    if (data.success) {
+        const tbody = document.getElementById('paiements-body');
+        tbody.innerHTML = '';
+        
+        data.data.forEach(paiement => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${paiement.id_paiement}</td>
+                <td>${paiement.nom} ${paiement.prenom}</td>
+                <td>${paiement.montant} €</td>
+                <td>${paiement.mode_paiement}</td>
+                <td>${new Date(paiement.date_paiement).toLocaleString()}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+}
+
+// Gérer l'entrée d'un véhicule
+async function gererEntree() {
+    const nom = document.getElementById('nom-entree').value;
+    const prenom = document.getElementById('prenom-entree').value;
+    const telephone = document.getElementById('telephone-entree').value;
+    const pmr = document.getElementById('pmr-entree').checked ? 'O' : 'N';
+    
+    if (!nom || !prenom || !telephone) {
+        showNotification('Veuillez remplir tous les champs obligatoires', 'error');
+        return;
+    }
+    
+    const data = await apiCall('/entree', {
+        method: 'POST',
+        body: JSON.stringify({ nom, prenom, telephone, pmr })
+    });
+    
+    if (data.success) {
+        showNotification(data.message, 'success');
+        document.getElementById('form-entree').reset();
+        loadReservations();
+        loadStatistics();
+    }
+}
+
+// Gérer la sortie d'un véhicule
+async function gererSortie() {
+    const idTicket = document.getElementById('id-ticket').value;
+    const modePaiement = document.getElementById('mode-paiement').value;
+    
+    if (!idTicket) {
+        showNotification('Veuillez saisir l\'ID du ticket', 'error');
+        return;
+    }
+    
+    const data = await apiCall('/sortie', {
+        method: 'POST',
+        body: JSON.stringify({ id_ticket: idTicket, mode_paiement: modePaiement })
+    });
+    
+    if (data.success) {
+        showNotification(data.message, 'success');
+        document.getElementById('form-sortie').reset();
+        loadReservations();
+        loadPaiements();
+        loadStatistics();
+    }
+}
+
+// Gérer un nouvel abonnement
+async function gererAbonnement() {
+    const nom = document.getElementById('nom-abonnement').value;
+    const prenom = document.getElementById('prenom-abonnement').value;
+    const telephone = document.getElementById('telephone-abonnement').value;
+    const pmr = document.getElementById('pmr-abonnement').checked ? 'O' : 'N';
+    
+    if (!nom || !prenom || !telephone) {
+        showNotification('Veuillez remplir tous les champs obligatoires', 'error');
+        return;
+    }
+    
+    const data = await apiCall('/abonner', {
+        method: 'POST',
+        body: JSON.stringify({ nom, prenom, telephone, pmr })
+    });
+    
+    if (data.success) {
+        showNotification(data.message, 'success');
+        document.getElementById('form-abonnement').reset();
+        loadStatistics();
+    }
+}
+document.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".edit-client");
+    if (!btn) return;
+
+    const id = btn.dataset.id;
+
+    const res = await apiCall(`/client/${id}`);
+    if (!res.success) {
+        alert(res.error || "Erreur chargement client");
+        return;
+    }
+
+    const c = res.data;
+
+    document.getElementById("edit-client-id").value = c.id_client || c.ID_CLIENT;
+    document.getElementById("edit-nom").value = c.nom || c.NOM;
+    document.getElementById("edit-prenom").value = c.prenom || c.PRENOM;
+    document.getElementById("edit-telephone").value = c.telephone || c.TELEPHONE;
+    document.getElementById("edit-pmr").value =
+        (c.pmr === 'O' || c.PMR === 'O') ? 'O' : 'N';
+
+    openModal('modal-edit-client');
+});
+
+document.getElementById("form-edit-client").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById("edit-client-id").value;
+
+    const payload = {
+        nom: document.getElementById("edit-nom").value.trim(),
+        prenom: document.getElementById("edit-prenom").value.trim(),
+        telephone: document.getElementById("edit-telephone").value.trim(),
+        pmr: document.getElementById("edit-pmr").value
+    };
+
+    const res = await apiCall(`/client/update/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(payload)
+    });
+
+    if (!res.success) {
+        alert(res.error || "Erreur modification");
+        return;
+    }
+
+    alert("✅ Client modifié avec succès");
+    closeModal("modal-edit-client");
+    loadClients();
+    loadStats();
+});
+async function loadTarifs() {
+    const res = await apiCall("/tarifs");
+    const tbody = document.getElementById("tarifs-tbody");
+    tbody.innerHTML = "";
+
+    if (!res.success || !res.data) {
+        tbody.innerHTML =
+          `<tr><td colspan="3">Erreur chargement tarifs</td></tr>`;
+        return;
+    }
+
+    res.data.forEach(t => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${t.id_tarif}</td>
+            <td>${t.type_client}</td>
+            <td>${t.tarif_horaire} MAD/h</td>
+          </tr>`;
+    });
+}
+
+function closeEditModal() {
+    document.getElementById("editModal").classList.add("hidden");
+}
+document.getElementById("form-update-tarif")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      tarif_abonne: Number(document.getElementById("tarif-abonne").value),
+      tarif_non_abonne: Number(document.getElementById("tarif-non-abonne").value)
+    };
+
+    const res = await apiCall("/tarif/update", {
+      method: "PUT",
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.success) {
+      alert(res.error || "❌ Erreur mise à jour tarif");
+      return;
+    }
+
+    alert("✅ Tarifs mis à jour");
+    closeModal("modal-update-tarif");
+    loadTarifs(); // recharge la table
+});
+
+
+document.getElementById("btn-update-tarif")
+  .addEventListener("click", () => {
+    openModal("modal-update-tarif");
+  });
+// Fonction pour charger les tarifs depuis l'API
+async function loadTarifs() {
+    try {
+        const response = await fetch('/tarifs');
+        const data = await response.json();
+        
+        if (!data.success) {
+            console.error('Erreur chargement tarifs:', data.error);
+            return;
+        }
+        
+        const tbody = document.getElementById('tarifs-tbody');
+        tbody.innerHTML = ''; // Vider le tableau
+        
+        // Ajouter chaque tarif dans le tableau
+        data.data.forEach(tarif => {
+            const row = document.createElement('tr');
+            
+            // ID_TARIF
+            const tdId = document.createElement('td');
+            tdId.textContent = tarif.ID_TARIF;
+            
+            // TYPE_CLIENT (avec accent si nécessaire)
+            const tdType = document.createElement('td');
+            let typeDisplay = tarif.TYPE_CLIENT;
+            if (tarif.TYPE_CLIENT === 'Abonne') typeDisplay = 'Abonné';
+            if (tarif.TYPE_CLIENT === 'Non_Abonne') typeDisplay = 'Non Abonné';
+            tdType.textContent = typeDisplay;
+            
+            // TARIF_HORAIRE
+            const tdTarif = document.createElement('td');
+            tdTarif.textContent = tarif.TARIF_HORAIRE.toFixed(2) + ' MAD/h';
+            
+            row.appendChild(tdId);
+            row.appendChild(tdType);
+            row.appendChild(tdTarif);
+            tbody.appendChild(row);
+        });
+        
+    } catch (error) {
+        console.error('Erreur lors du chargement des tarifs:', error);
+        alert('Erreur chargement des tarifs');
+    }
+}
+
+// Fonction pour mettre à jour les tarifs
+async function updateTarif(event) {
+    event.preventDefault();
+    
+    const tarifAbonne = document.getElementById('tarif-abonne').value;
+    const tarifNonAbonne = document.getElementById('tarif-non-abonne').value;
+    
+    // Validation
+    if (!tarifAbonne || !tarifNonAbonne) {
+        alert('Veuillez remplir tous les champs');
+        return;
+    }
+    
+    if (parseFloat(tarifAbonne) <= 0 || parseFloat(tarifNonAbonne) <= 0) {
+        alert('Les tarifs doivent être positifs');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/tarif/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tarif_abonne: parseFloat(tarifAbonne),
+                tarif_non_abonne: parseFloat(tarifNonAbonne)
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            alert('Erreur: ' + (data.error || 'Échec de la mise à jour'));
+            return;
+        }
+        
+        alert('✅ Tarifs mis à jour avec succès');
+        closeModal('modal-update-tarif');
+        
+        // Recharger les tarifs pour afficher les nouvelles valeurs
+        await loadTarifs();
+        
+        // Réinitialiser le formulaire
+        document.getElementById('form-update-tarif').reset();
+        
+    } catch (error) {
+        console.error('Erreur mise à jour tarif:', error);
+        alert('Erreur lors de la mise à jour des tarifs');
+    }
+}
+
+// Attacher les événements
+document.addEventListener('DOMContentLoaded', function() {
+    // Charger les tarifs au démarrage
+    loadTarifs();
+    
+    // Gérer le formulaire de mise à jour
+    const form = document.getElementById('form-update-tarif');
+    if (form) {
+        form.addEventListener('submit', updateTarif);
+    }
+    
+    // Pré-remplir le modal avec les valeurs actuelles
+    document.getElementById('btn-update-tarif').addEventListener('click', async function() {
+        try {
+            // Charger les tarifs actuels pour pré-remplir le formulaire
+            const response = await fetch('/tarifs');
+            const data = await response.json();
+            
+            if (data.success && data.data.length >= 2) {
+                // Trouver le tarif Abonné (peut être id_tarif=1)
+                const tarifAbonne = data.data.find(t => 
+                    t.TYPE_CLIENT === 'Abonne' || t.ID_TARIF === 1
+                );
+                // Trouver le tarif Non Abonné (peut être id_tarif=2)
+                const tarifNonAbonne = data.data.find(t => 
+                    t.TYPE_CLIENT === 'Non_Abonne' || t.ID_TARIF === 2
+                );
+                
+                if (tarifAbonne) {
+                    document.getElementById('tarif-abonne').value = tarifAbonne.TARIF_HORAIRE;
+                }
+                if (tarifNonAbonne) {
+                    document.getElementById('tarif-non-abonne').value = tarifNonAbonne.TARIF_HORAIRE;
+                }
+            }
+            
+            openModal('modal-update-tarif');
+        } catch (error) {
+            console.error('Erreur pré-remplissage:', error);
+            openModal('modal-update-tarif');
+        }
+    });
+});
+</script>
+
+</body>
+</html>
